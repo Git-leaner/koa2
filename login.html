@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+</head>
+<body>
+	<div id="dis">
+		<input id="username" type="name" name="name"><br>
+		<input id="password" type="password" name="password"><br>
+		<button id="sub">submit</button><br>
+	</div>
+</body>
+<script type="text/javascript" src="./axios.min.js"></script>
+<script type="text/javascript">
+	axios.interceptors.request.use(config => {
+	    const token = localStorage.getItem('token');
+	    // config.headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', }
+	    config.headers.common['Authorization'] = 'Bearer ' + token;
+	    return config;
+	})
+</script>
+<script type="text/javascript">
+	URL='http:localhost:3050';
+	sub.onclick=function(){
+		axios.post(URL+'/login', 
+		{
+	        name: username.value,
+	        password: password.value
+	    }).then(response => {
+	    	var res=response.data;
+	        if(res.code === '000001'){
+	            localStorage.setItem('token', res.data);
+	            localStorage.setItem('token_exp', new Date().getTime());
+	           var  str=`<p>id:${res.user._id}</p><br>
+	            	<p>name:${res.user.name}</p><br>
+	            	<p>sex:${res.user.sex}</p><br>
+	            	<p>age:${res.user.age}</p><br>`
+	    	console.log(str)
+
+	            dis.innerHTML=str
+	        }else{
+	            alert(res.msg);
+	        }
+	    })
+	}
+</script>
+</html>
